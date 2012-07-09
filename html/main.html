@@ -1,0 +1,137 @@
+<!doctype html>
+<html ng-app="redditReader" ng-csp xmlns:ng="http://angularjs.org">
+	<head>
+		<meta charset="utf-8" /> 
+		<script type="text/javascript" src="../scripts/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="../scripts/jquery.timeago.js"></script>
+		<script type="text/javascript" src="../scripts/angular-1.0.0rc7.js"></script>
+		<script type="text/javascript" src="../scripts/main.js"></script>
+		<link type="text/css" rel="stylesheet" href="../styles/reset.css"/>
+		<link type="text/css" rel="stylesheet" href="../styles/main.css"/>
+	</head>
+	
+	<body>
+		<div id="container">
+		
+			<div id="subreddit-list-container">
+				<div ng-controller="Subreddit_List_Controller">
+				
+					<ul ng-hide="loading"
+						class="unstyled">
+						<li ng-repeat="subreddit in subreddits">
+							<h6 ng-click="load(subreddit)">
+								{{subreddit.data.display_name}}
+							</h6>
+						</li>
+					</ul>
+					
+					<div ng-show="loading" 
+						 class="loading-message">
+						Loading subreddits...
+					</div>
+					
+				</div>
+			</div>
+			
+			<div id="post-list-container">
+				<div id="post-list" 
+					 ng-controller="Post_List_Controller">
+
+					 <ul ng-hide="loading">
+						<li ng-repeat="post in posts" 
+							ng-click="load(post);" >
+							<div ng-class="post.klass">
+								<div class="gutter">
+									<h4 class="score">{{post.data.score}}</h4>
+									<img src="{{post.data.thumbnail}}"  />
+								</div>			
+								
+								<div class="content">
+									<h6 class="domain small">{{post.data.domain}}</h6>
+									<h4 class="title">{{post.data.title}}</h4>
+									<h6 class="ago small">{{post.data.created_utc | utcdatetolocal | timeago}} by <span>{{post.data.author}}</span></h6>
+									<h6 class="comment_count small">{{post.data.num_comments}} comments</h6>
+								</div>
+								<div style="clear:both;"></div>
+							</div>
+						</li>
+					</ul>	
+
+					<div ng-show="loading" 
+						 class="loading-message">
+						Loading posts...
+					</div>
+				
+				</div>
+					
+			</div>
+			
+			<div id="post-container">
+				<div ng-controller="Post_Controller" id="post">
+				
+					<div class="header" 
+						 ng-hide="!post.created_utc">
+						
+						<div class="top">
+							<img src="{{post.subredditheader}}"/>
+						</div>
+						
+						<div class="gutter">
+							<h3 class="score">{{post.score}}</h3>
+							<img src="{{post.thumbnail}}"  />
+						</div>
+						
+						<div class="content">
+							<h2 class="title">{{post.title}}</h2>
+							<h6 class="domain">{{post.domain}}</h6>					 
+							<h6 class="posted small">submitted {{post.created_utc | utcdatetolocal | timeago}} by {{post.author}}</h6>
+						</div>
+						<div style="clear:both;"></div>
+					</div>
+
+					<p class="self-text" 
+						ng-hide="!post.selftext_html"
+						ng-bind-html-unsafe="post.selftext_html"></p>	
+
+					<img src="{{post.full_image}}"
+						class="full-image"
+						ng-hide="!post.full_image"/>
+						
+					<iframe class="full-video" type="text/html"
+					  src="{{post.embedded_video_url}}"
+					  ng-hide="!post.embedded_video_url"
+					  frameborder="0">		</iframe>				
+				
+					<div class="comments"
+					
+						 ng-hide="!post.created_utc">
+					
+						<div ng-show="loading" 
+							class="loading-message">
+							Loading comments....
+						</div>
+							
+						<div ng-hide="loading">
+							<h3>Comments</h3>
+							<ul>
+								<li ng-repeat="comment in comments">
+									<h6 class="user small"><em>{{comment.data.author}}</em> {{comment.data.created_utc | utcdatetolocal | timeago}}</h6>
+									<p class="body">{{comment.data.body}}</p>
+									<ul class="replies">
+										<li ng-repeat="reply in comment.data.replies.data.children" >
+											<div ng-include src="'replies.html'"></div>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						
+					</div>		
+				
+				</div>
+			</div>
+
+		</div>
+		
+	</body>
+</html>

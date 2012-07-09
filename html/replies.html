@@ -1,0 +1,18 @@
+
+<div ng-switch on="reply.kind">
+
+	<div ng-switch-when="t1">
+		<h6 class="user small"><em>{{reply.data.author}}</em> {{reply.data.created_utc | utcdatetolocal | timeago}}</h6>
+		<p class="body">{{reply.data.body}}</p>
+
+		<ul class="replies">
+			<li ng-repeat="reply in reply.data.replies.data.children" 
+				style="clear:both;">
+				<div ng-include src="'replies.html'"></div>
+			</li>
+		</ul>
+	</div>
+	
+	 <h6 ng-switch-when="more" class="more small">load {{reply.data.children.length}} more replies...</h6>
+
+</div>
